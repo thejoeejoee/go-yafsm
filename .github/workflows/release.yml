@@ -6,6 +6,7 @@ on:
 
 jobs:
   build:
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: prantlf/setup-v-action@v2
