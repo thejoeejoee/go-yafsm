@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"github.com/stretchr/testify/assert"
-	"github.com/thejoeejoee/yafsm"
+	"github.com/thejoeejoee/go-yafsm"
 	"testing"
 )
 
