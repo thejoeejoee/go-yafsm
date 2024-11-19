@@ -1,0 +1,12 @@
+name: Release
+
+on:
+  push:
+    branches: [ "master" ]
+
+jobs:
+  build:
+    steps:
+      - uses: actions/checkout@v4
+      - uses: prantlf/setup-v-action@v2
+      - uses: prantlf/bump-version-action@v2
