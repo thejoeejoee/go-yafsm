@@ -49,3 +49,19 @@ func (m *Machine[S, E]) Can(e E) bool {
 	_, ok := m.transitions[m.state][e]
 	return ok
 }
+
+func (m *Machine[S, E]) checkTransition(ctx context.Context, event E, origin S, target S) error {
+	for _, condition := range m.conditions[event] {
+		err := condition(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	err := m.store.Save(ctx, target)
+	if err != nil {
+		return errors.Join(ErrStoreSaveFailed, err)
+	}
+
+	return nil
+}
