@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestMachine_Input(t *testing.T) {
+func TestMachine_Handler(t *testing.T) {
 	door, _ := yafasm.New[DoorState, DoorEvent]().
 		WithInitial(Locked).
 		WithTransitions(transitions).
@@ -29,14 +29,14 @@ func TestMachine_Input(t *testing.T) {
 		}
 	}
 
-	input := yafasm.NewHandler[DoorState, DoorEvent, msg](door)
-	input.On(Locked, handler(OnLocked))
-	input.On(Closed, handler(OnClosed))
+	h := yafasm.NewHandler[msg](door)
+	h.On(Locked, handler(OnLocked))
+	h.On(Closed, handler(OnClosed))
 
 	ctx := context.Background()
 	// initially locked, so Message1 should be called
-	assert.NoError(t, input.Handle(ctx, Message1))
-	assert.NoError(t, input.Handle(ctx, Message2))
+	assert.NoError(t, h.Handle(ctx, Message1))
+	assert.NoError(t, h.Handle(ctx, Message2))
 	assert.Equal(t, 1, counts[OnLocked][Message1])
 	assert.Equal(t, 1, counts[OnLocked][Message2])
 	assert.Equal(t, 0, counts[OnClosed][Message1])
@@ -45,8 +45,8 @@ func TestMachine_Input(t *testing.T) {
 	// unlock the door
 	assert.NoError(t, door.Event(ctx, Unlock))
 	// now the door is closed, so onClosed should be called
-	assert.NoError(t, input.Handle(ctx, Message1))
-	assert.NoError(t, input.Handle(ctx, Message2))
+	assert.NoError(t, h.Handle(ctx, Message1))
+	assert.NoError(t, h.Handle(ctx, Message2))
 	assert.Equal(t, 1, counts[OnLocked][Message1])
 	assert.Equal(t, 1, counts[OnLocked][Message2])
 	assert.Equal(t, 1, counts[OnClosed][Message1])
