@@ -2,7 +2,7 @@ package yafasm
 
 import (
 	"context"
-	"errors"
+	"fmt"
 )
 
 // Transitions defines all possible transitions between states.
@@ -19,9 +19,9 @@ func (m *Machine[S, E]) Event(ctx context.Context, e E) error {
 	ctx = withOriginState(ctx, m.state)
 	ctx = withEvent(ctx, e)
 
-	m.fireEventCallbacks(ctx, beforeEvent, e)
+	m.fireEventCallbacks(ctx, eventReceived, e)
 	defer func() {
-		m.fireEventCallbacks(ctx, afterEvent, e)
+		m.fireEventCallbacks(ctx, eventProcessed, e)
 	}()
 
 	if _, ok := m.transitions[m.state][e]; ok {
@@ -31,7 +31,7 @@ func (m *Machine[S, E]) Event(ctx context.Context, e E) error {
 
 		err := m.checkTransition(ctx, e, m.state, to)
 		if err != nil {
-			return errors.Join(ErrConditionFailed, err)
+			return fmt.Errorf("%w: %w", ErrConditionFailed, err)
 		}
 
 		m.fireStateCallbacks(ctx, leaveState, m.state)
@@ -54,13 +54,15 @@ func (m *Machine[S, E]) checkTransition(ctx context.Context, event E, origin S, 
 	for _, condition := range m.conditions[event] {
 		err := condition(ctx)
 		if err != nil {
+
 			return err
 		}
 	}
 
 	err := m.store.Save(ctx, target)
+
 	if err != nil {
-		return errors.Join(ErrStoreSaveFailed, err)
+		return fmt.Errorf("%w %w", ErrStoreSaveFailed, err)
 	}
 
 	return nil
