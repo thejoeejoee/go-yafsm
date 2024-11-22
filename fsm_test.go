@@ -79,7 +79,7 @@ func TestMachine_AddNotification(t *testing.T) {
 	door, _ := yafasm.New[DoorState, DoorEvent]().
 		WithInitial(Locked).
 		WithTransitions(transitions).
-		AfterEvent(Unlock, func(ctx context.Context, event DoorEvent) {
+		EventProcessed(Unlock, func(ctx context.Context, event DoorEvent) {
 			assert.Equal(t, Unlock, event)
 			assert.Equal(t, Locked, *yafasm.OriginStateFromCtx[DoorState](ctx))
 			assert.Equal(t, Closed, *yafasm.TargetStateFromCtx[DoorState](ctx))

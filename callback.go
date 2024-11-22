@@ -7,8 +7,8 @@ import (
 type eventCallbackType string
 
 const (
-	beforeEvent eventCallbackType = "beforeEvent"
-	afterEvent  eventCallbackType = "afterEvent"
+	eventReceived  eventCallbackType = "eventReceived"
+	eventProcessed eventCallbackType = "eventProcessed"
 )
 
 type stateCallbackType string
@@ -35,20 +35,20 @@ type Callbacks[S, E comparable] struct {
 	allStates SingleStateCallbacks[S]
 }
 
-func (b *Builder[S, E]) BeforeEvent(e E, callback EventCallback[E]) *Builder[S, E] {
-	b.callbacks.events[e][beforeEvent] = append(b.callbacks.events[e][beforeEvent], callback)
+func (b *Builder[S, E]) EventReceived(e E, callback EventCallback[E]) *Builder[S, E] {
+	b.callbacks.events[e][eventReceived] = append(b.callbacks.events[e][eventReceived], callback)
 	return b
 }
-func (b *Builder[S, E]) BeforeAll(callback EventCallback[E]) *Builder[S, E] {
-	b.callbacks.allEvents[beforeEvent] = append(b.callbacks.allEvents[beforeEvent], callback)
+func (b *Builder[S, E]) AnyReceived(callback EventCallback[E]) *Builder[S, E] {
+	b.callbacks.allEvents[eventReceived] = append(b.callbacks.allEvents[eventReceived], callback)
 	return b
 }
-func (b *Builder[S, E]) AfterEvent(e E, callback EventCallback[E]) *Builder[S, E] {
-	b.callbacks.events[e][afterEvent] = append(b.callbacks.events[e][afterEvent], callback)
+func (b *Builder[S, E]) EventProcessed(e E, callback EventCallback[E]) *Builder[S, E] {
+	b.callbacks.events[e][eventProcessed] = append(b.callbacks.events[e][eventProcessed], callback)
 	return b
 }
-func (b *Builder[S, E]) AfterAll(callback EventCallback[E]) *Builder[S, E] {
-	b.callbacks.allEvents[afterEvent] = append(b.callbacks.allEvents[afterEvent], callback)
+func (b *Builder[S, E]) AnyProcessed(callback EventCallback[E]) *Builder[S, E] {
+	b.callbacks.allEvents[eventProcessed] = append(b.callbacks.allEvents[eventProcessed], callback)
 	return b
 }
 
