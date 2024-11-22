@@ -1,5 +1,11 @@
 # Changelog
 
+# [0.3.0](https://github.com/thejoeejoee/go-yafsm/compare/v0.2.0...v0.3.0) (2024-11-22)
+
+## Features
+
+* state monitor ([9c0e3f6](https://github.com/thejoeejoee/go-yafsm/commit/9c0e3f6d19e887456f590903c524eebc97e88e42))
+
 # [0.2.0](https://github.com/thejoeejoee/go-yafsm/compare/v0.1.0...v0.2.0) (2024-11-21)
 
 ## Features
