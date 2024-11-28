@@ -71,11 +71,16 @@ func (b *Builder[S, E]) Build(ctx context.Context) (*Machine[S, E], error) {
 		return nil, err
 	}
 
-	return &Machine[S, E]{
+	m := &Machine[S, E]{
 		state:       initial,
 		transitions: b.transitions,
 		conditions:  b.conditions,
 		store:       b.store,
 		callbacks:   b.callbacks,
-	}, nil
+	}
+
+	// run enter state for initial state
+	m.fireStateCallbacks(ctx, enterState, initial)
+
+	return m, nil
 }
