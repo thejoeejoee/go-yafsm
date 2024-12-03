@@ -54,6 +54,11 @@ func (m *Machine[S, E]) checkTransition(ctx context.Context, event E, origin S, 
 	for _, condition := range m.conditions[event] {
 		err := condition(ctx)
 		if err != nil {
+			ctx := withConditionErr(ctx, err)
+
+			for _, callback := range m.callbacks.conditionErr {
+				callback(ctx, event)
+			}
 
 			return err
 		}

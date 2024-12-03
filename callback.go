@@ -33,6 +33,8 @@ type Callbacks[S, E comparable] struct {
 
 	allEvents SingleEventCallbacks[E]
 	allStates SingleStateCallbacks[S]
+
+	conditionErr []EventCallback[E]
 }
 
 func (b *Builder[S, E]) EventReceived(e E, callback EventCallback[E]) *Builder[S, E] {

@@ -15,10 +15,11 @@ func New[S, E comparable]() *Builder[S, E] {
 	return &Builder[S, E]{
 		conditions: map[E][]Condition{},
 		callbacks: Callbacks[S, E]{
-			events:    map[E]SingleEventCallbacks[E]{},
-			states:    map[S]SingleStateCallbacks[S]{},
-			allEvents: map[eventCallbackType][]EventCallback[E]{},
-			allStates: map[stateCallbackType][]StateCallback[S]{},
+			events:       map[E]SingleEventCallbacks[E]{},
+			states:       map[S]SingleStateCallbacks[S]{},
+			allEvents:    map[eventCallbackType][]EventCallback[E]{},
+			allStates:    map[stateCallbackType][]StateCallback[S]{},
+			conditionErr: []EventCallback[E]{},
 		},
 	}
 }

@@ -7,6 +7,7 @@ import (
 type ctxOriginStateKey struct{}
 type ctxTargetStateKey struct{}
 type ctxEventKey struct{}
+type ctxConditionErr struct{}
 
 func with[T comparable](key any) func(context.Context, T) context.Context {
 	return func(ctx context.Context, v T) context.Context {
@@ -52,4 +53,14 @@ func TargetStateFromCtx[S comparable](ctx context.Context) *S {
 // EventFromCtx gets the event from the context.
 func EventFromCtx[E comparable](ctx context.Context) *E {
 	return from[E](ctxEventKey{})(ctx)
+}
+
+// ConditionErrFromCtx gets the error from the context.
+func ConditionErrFromCtx(ctx context.Context) *error {
+	return from[error](ctxConditionErr{})(ctx)
+}
+
+// withConditionErr sets the error in the context.
+func withConditionErr(ctx context.Context, err error) context.Context {
+	return with[error](ctxConditionErr{})(ctx, err)
 }

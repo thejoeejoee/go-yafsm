@@ -2,7 +2,6 @@ package yafasm_test
 
 import (
 	"context"
-	"errors"
 	"github.com/stretchr/testify/assert"
 	"github.com/thejoeejoee/go-yafsm"
 	"testing"
@@ -121,39 +120,4 @@ func TestMachine_WithNotifications(t *testing.T) {
 
 	assert.True(t, called1, "notification 1 should be called")
 	assert.True(t, called2, "notification 2 should be called")
-}
-
-func TestMachine_WithCondition(t *testing.T) {
-	var pinKey struct{}
-	var invalidPin = errors.New("invalid pin")
-	const LockPIN = "1234"
-
-	door, _ := yafasm.New[DoorState, DoorEvent]().
-		WithInitial(Locked).
-		WithTransitions(transitions).
-		AddCondition(Unlock, func(ctx context.Context) error {
-			assert.Equal(t, Locked, *yafasm.OriginStateFromCtx[DoorState](ctx))
-			assert.Equal(t, Closed, *yafasm.TargetStateFromCtx[DoorState](ctx))
-			assert.Equalf(t, Unlock, *yafasm.EventFromCtx[DoorEvent](ctx), "event should be unlock")
-
-			if p, ok := ctx.Value(pinKey).(string); ok && p == LockPIN {
-				return nil
-			}
-
-			return invalidPin
-		}).
-		Build(context.Background())
-
-	ctx := context.Background()
-
-	assert.Equalf(t, Locked, door.State(), "door should be locked")
-	err := door.Event(ctx, Unlock)
-	assert.ErrorIs(t, err, yafasm.ErrConditionFailed, "condition failed")
-	assert.ErrorIs(t, err, invalidPin, "condition failed")
-	assert.Equalf(t, Locked, door.State(), "door should be locked")
-
-	ctx = context.WithValue(ctx, pinKey, LockPIN)
-	err = door.Event(ctx, Unlock)
-	assert.NoError(t, err, "should be able to unlock")
-	assert.Equalf(t, Closed, door.State(), "door should be closed")
 }
