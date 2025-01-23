@@ -1,5 +1,7 @@
 # Changelog
 
+# [0.6.0](https://github.com/thejoeejoee/go-yafsm/compare/v0.5.0...v0.6.0) (2025-01-23)
+
 # [0.5.0](https://github.com/thejoeejoee/go-yafsm/compare/v0.4.0...v0.5.0) (2024-12-03)
 
 # [0.4.0](https://github.com/thejoeejoee/go-yafsm/compare/v0.3.0...v0.4.0) (2024-11-28)
