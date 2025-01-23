@@ -49,7 +49,7 @@ func TestMachine_Event(t *testing.T) {
 	assert.NoError(t, door.Event(ctx, Close))
 	assert.Equalf(t, Locked, door.State(), "door should be locked")
 
-	assert.NoError(t, door.Event(ctx, Lock))
+	assert.ErrorIs(t, door.Event(ctx, Lock), yafasm.ErrNoTransitionFound, "no transition found")
 	assert.Equalf(t, Locked, door.State(), "door should be locked")
 }
 

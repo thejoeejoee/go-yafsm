@@ -40,9 +40,10 @@ func (m *Machine[S, E]) Event(ctx context.Context, e E) error {
 		}()
 
 		m.state = to
+		return nil
 	}
 
-	return nil
+	return ErrNoTransitionFound
 }
 
 func (m *Machine[S, E]) Can(e E) bool {
@@ -51,7 +52,9 @@ func (m *Machine[S, E]) Can(e E) bool {
 }
 
 func (m *Machine[S, E]) checkTransition(ctx context.Context, event E, origin S, target S) error {
-	for _, condition := range m.conditions[event] {
+	conditions := append(m.callbacks.anyCondition, m.conditions[event]...)
+
+	for _, condition := range conditions {
 		err := condition(ctx)
 		if err != nil {
 			ctx := withConditionErr(ctx, err)

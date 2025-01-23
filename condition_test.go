@@ -86,3 +86,35 @@ func TestMachine_WithConditionErrCallback(t *testing.T) {
 	assert.Equalf(t, Closed, door.State(), "door should be closed")
 	assert.Nil(t, catchErr, "condition not failed")
 }
+
+func TestMachine_AnyCondition(t *testing.T) {
+	var called = 0
+
+	door, _ := yafasm.New[DoorState, DoorEvent]().
+		WithInitial(Locked).
+		WithTransitions(transitions).
+		AnyCondition(func(ctx context.Context) error {
+			called++
+			return errors.New("stop")
+		}).
+		Build(context.Background())
+
+	ctx := context.Background()
+
+	err := door.Event(ctx, Unlock)
+	assert.Error(t, err, "should be error")
+	assert.Equal(t, 1, called, "should be called")
+
+	err = door.Event(ctx, Unlock)
+	assert.Error(t, err, "should be error")
+	assert.Equal(t, 2, called, "should be called")
+
+	// not possible to transition to Open
+	err = door.Event(ctx, Open)
+	assert.Error(t, err, "should be error")
+	assert.Equal(t, 2, called, "should be called")
+
+	err = door.Event(ctx, Unlock)
+	assert.Error(t, err, "should be error")
+	assert.Equal(t, 3, called, "should be called")
+}

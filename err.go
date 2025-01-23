@@ -1,7 +1,11 @@
 package yafasm
 
-import "fmt"
+import (
+	"fmt"
+)
 
 var ErrConditionFailed = fmt.Errorf("condition failed")
 
 var ErrStoreSaveFailed = fmt.Errorf("store save failed")
+
+var ErrNoTransitionFound = fmt.Errorf("no transition found")
